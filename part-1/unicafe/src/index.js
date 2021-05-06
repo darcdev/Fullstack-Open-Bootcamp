@@ -3,9 +3,9 @@ import ReactDOM from "react-dom";
 
 const Stadistic = ({ text, value }) => {
   return (
-    <p>
-      {text} : {value}{" "}
-    </p>
+    <span>
+      {text} : {value}
+    </span>
   );
 };
 
@@ -30,12 +30,40 @@ const Stadistics = ({ good, neutral, bad }) => {
   return (
     <>
       <h2>Stadistics</h2>
-      <Stadistic text="good" value={good} />
-      <Stadistic text="neutral" value={neutral} />
-      <Stadistic text="bad" value={bad} />
-      <Stadistic text="all" value={getTotal()} />
-      <Stadistic text="average" value={getAverage()} />
-      <Stadistic text="positive" value={getPositive()} />
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <Stadistic text="good" value={good} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Stadistic text="neutral" value={neutral} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Stadistic text="bad" value={bad} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Stadistic text="all" value={getTotal()} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Stadistic text="average" value={getAverage()} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Stadistic text="positive" value={getPositive()} />
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </>
   );
 };
