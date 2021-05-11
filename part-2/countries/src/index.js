@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
+import DetailsCountry from "./DetailsCountry";
+import Countries from "./Countries";
 
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState("");
   useEffect(() => {
-    axios
-      .get(`https://restcountries.eu/rest/v2/name/${country}`)
-      .then((response) => {
-        console.log(response.data);
-        setCountries(response.data);
-      });
+    if (country) {
+      axios
+        .get(`https://restcountries.eu/rest/v2/name/${country}`)
+        .then((response) => {
+          setCountries(response.data);
+        });
+    }
   }, [country]);
 
   return (
@@ -23,36 +26,9 @@ const App = () => {
       ) : (
         <>
           {countries.length === 1 ? (
-            <div>
-              <h2>{countries[0].name}</h2>
-              <p>
-                <b>Capital</b> : {countries[0].capital}{" "}
-              </p>
-              <p>
-                <b>Population</b> : {countries[0].population}{" "}
-              </p>
-
-              <h4>Languages</h4>
-
-              <ul>
-                {countries[0].languages.map((language) => (
-                  <li key={language.name}>{language.name}</li>
-                ))}
-              </ul>
-              <div>
-                <img
-                  width="150"
-                  src={countries[0].flag}
-                  alt={countries[0].name}
-                />
-              </div>
-            </div>
+            <DetailsCountry country={countries[0]} />
           ) : (
-            <>
-              {countries.map((country) => (
-                <div key={country.name}>{country.name}</div>
-              ))}
-            </>
+            <Countries countries={countries} />
           )}
         </>
       )}
