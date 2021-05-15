@@ -1,29 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
+import personService from "./services/persons";
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", phone: "040-123456" },
-    { name: "Ada Lovelace", phone: "39-44-5323523" },
-    { name: "Dan Abramov", phone: "12-43-234345" },
-    { name: "Mary Poppendieck", phone: "39-23-6423122" },
-  ]);
-
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [newSearch, setNewSearch] = useState("");
 
+  useEffect(() => {
+    personService.getAll().then((persons) => setPersons(persons));
+  }, []);
+
   const verifyName = (name, phone) => {
-    const person = persons.find(
-      (person) => person.name === name || person.phone === phone
-    );
-    if (person)
-      alert(
-        `the contact ${name} with phone ${phone} is already added to phonebook`
-      );
+    const person = persons.find((person) => person.name === name);
     return person;
   };
 
@@ -31,14 +24,23 @@ const App = () => {
     evt.preventDefault();
     const existName = verifyName(newName, newPhone);
 
+    if (existName) {
+      const confirm = window.confirm(
+        `${newName} is already added to phonebook , replace the old number with a new one?`
+      );
+      if (confirm) {
+        handleUpdatePerson();
+        return;
+      }
+    }
     if (newName && newPhone && !existName) {
-      setPersons([
-        ...persons,
-        {
-          name: newName,
-          phone: newPhone,
-        },
-      ]);
+      const newPerson = {
+        name: newName,
+        number: newPhone,
+      };
+      personService
+        .create(newPerson)
+        .then((newPerson) => setPersons([...persons, newPerson]));
     }
 
     setNewName("");
@@ -50,6 +52,30 @@ const App = () => {
         person.name.toLowerCase().includes(newSearch.toLowerCase())
       )
     : persons;
+
+  const handleDeletePerson = (id, name) => {
+    const confirm = window.confirm(`Delete ${name}?`);
+    if (confirm) {
+      personService.deletePerson(id).then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
+  };
+
+  const handleUpdatePerson = () => {
+    const { id } = persons.find((person) => person.name === newName);
+    const updatePerson = {
+      name: newName,
+      number: newPhone,
+    };
+    personService
+      .update(id, updatePerson)
+      .then((personUpdate) =>
+        setPersons(
+          persons.map((person) => (person.id !== id ? person : personUpdate))
+        )
+      );
+  };
 
   return (
     <div>
@@ -69,7 +95,12 @@ const App = () => {
 
       <h2>Numbers</h2>
 
-      <Persons persons={showPersons} />
+      <Persons
+        persons={showPersons}
+        handleSubmit={handleSubmit}
+        handleDeletePerson={handleDeletePerson}
+        handleUpdatePerson={handleUpdatePerson}
+      />
     </div>
   );
 };
