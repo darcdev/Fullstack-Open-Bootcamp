@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
+import Notification from "./Notification";
 import personService from "./services/persons";
 
 const App = () => {
@@ -10,6 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [newSearch, setNewSearch] = useState("");
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((persons) => setPersons(persons));
@@ -34,13 +36,7 @@ const App = () => {
       }
     }
     if (newName && newPhone && !existName) {
-      const newPerson = {
-        name: newName,
-        number: newPhone,
-      };
-      personService
-        .create(newPerson)
-        .then((newPerson) => setPersons([...persons, newPerson]));
+      handleCreatePerson();
     }
 
     setNewName("");
@@ -70,16 +66,50 @@ const App = () => {
     };
     personService
       .update(id, updatePerson)
-      .then((personUpdate) =>
+      .then((personUpdate) => {
         setPersons(
           persons.map((person) => (person.id !== id ? person : personUpdate))
-        )
-      );
+        );
+        handleNotification(`Updated ${newName}`);
+      })
+      .catch((error) => {
+        handleNotification(
+          `Information of ${newName} has already been removed from server`,
+          true
+        );
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+  };
+
+  const handleNotification = (message, isError) => {
+    setNotification({ message, isError });
+
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
+  };
+
+  const handleCreatePerson = () => {
+    const newPerson = {
+      name: newName,
+      number: newPhone,
+    };
+    personService.create(newPerson).then((newPerson) => {
+      setPersons([...persons, newPerson]);
+      handleNotification(`Added ${newName}`);
+    });
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+
+      {notification && (
+        <Notification
+          message={notification.message}
+          isError={notification.isError}
+        />
+      )}
 
       <Filter newSearch={newSearch} setNewSearch={setNewSearch} />
 
