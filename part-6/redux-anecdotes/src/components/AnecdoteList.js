@@ -5,7 +5,6 @@ const AnecdoteForm = () => {
   const dispatch = useDispatch();
   const anecdotes = useSelector(({ anecdotes }) => {
     const listAnecdotes = [...anecdotes];
-    console.log(listAnecdotes);
     return listAnecdotes.sort(function (a, b) {
       return b.votes - a.votes;
     });
