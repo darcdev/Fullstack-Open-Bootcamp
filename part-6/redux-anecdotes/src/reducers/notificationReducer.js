@@ -8,7 +8,6 @@ export const notifications = createSlice({
   },
   reducers: {
     createNotification: (state, action) => {
-      console.log(action.payload);
       return action.payload;
     },
     deleteNotification: (state, action) => {
