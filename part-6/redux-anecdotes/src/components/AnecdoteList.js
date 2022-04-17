@@ -1,15 +1,17 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { voteFor } from '../reducers/anecdoteReducer';
+import { voteAnecdote } from '../reducers/anecdoteReducer';
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
-  const anecdotes = useSelector((state) => {
-    return state.sort(function (a, b) {
+  const anecdotes = useSelector(({ anecdotes }) => {
+    const listAnecdotes = [...anecdotes];
+    console.log(listAnecdotes);
+    return listAnecdotes.sort(function (a, b) {
       return b.votes - a.votes;
     });
   });
   const vote = (id) => {
-    dispatch(voteFor(id));
+    dispatch(voteAnecdote(id));
   };
   return (
     <>
