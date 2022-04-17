@@ -25,7 +25,6 @@ const App = () => {
   const handleSubmit = (evt) => {
     evt.preventDefault();
     const existName = verifyName(newName, newPhone);
-
     if (existName) {
       const confirm = window.confirm(
         `${newName} is already added to phonebook , replace the old number with a new one?`
@@ -35,9 +34,7 @@ const App = () => {
         return;
       }
     }
-    if (newName && newPhone && !existName) {
-      handleCreatePerson();
-    }
+    handleCreatePerson();
 
     setNewName("");
     setNewPhone("");
@@ -52,9 +49,19 @@ const App = () => {
   const handleDeletePerson = (id, name) => {
     const confirm = window.confirm(`Delete ${name}?`);
     if (confirm) {
-      personService.deletePerson(id).then(() => {
-        setPersons(persons.filter((person) => person.id !== id));
-      });
+      personService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== id));
+          handleNotification("Person was removed");
+        })
+        .catch((error) => {
+          handleNotification(
+            error.response.data.error || error.response.data.msg,
+            true
+          );
+          setPersons(persons.filter((person) => person.id !== id));
+        });
     }
   };
 
@@ -66,9 +73,9 @@ const App = () => {
     };
     personService
       .update(id, updatePerson)
-      .then((personUpdate) => {
+      .then((response) => {
         setPersons(
-          persons.map((person) => (person.id !== id ? person : personUpdate))
+          persons.map((person) => (person.id !== id ? person : response.person))
         );
         handleNotification(`Updated ${newName}`);
       })
@@ -94,10 +101,18 @@ const App = () => {
       name: newName,
       number: newPhone,
     };
-    personService.create(newPerson).then((newPerson) => {
-      setPersons([...persons, newPerson]);
-      handleNotification(`Added ${newName}`);
-    });
+    personService
+      .create(newPerson)
+      .then((response) => {
+        setPersons([...persons, response.person]);
+        handleNotification(`Added ${newName}`);
+      })
+      .catch((error) => {
+        handleNotification(
+          error.response.data.error || error.response.data.msg,
+          true
+        );
+      });
   };
 
   return (
@@ -129,7 +144,6 @@ const App = () => {
         persons={showPersons}
         handleSubmit={handleSubmit}
         handleDeletePerson={handleDeletePerson}
-        handleUpdatePerson={handleUpdatePerson}
       />
     </div>
   );
