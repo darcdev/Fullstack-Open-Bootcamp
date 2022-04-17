@@ -4,8 +4,10 @@ import { createNotification } from '../reducers/notificationReducer';
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
-  const anecdotes = useSelector(({ anecdotes }) => {
-    const listAnecdotes = [...anecdotes];
+  const anecdotes = useSelector(({ anecdotes, filter }) => {
+    const listAnecdotes = anecdotes.filter((anecdote) =>
+      anecdote.content.toLowerCase().includes(filter.toLowerCase())
+    );
     return listAnecdotes.sort(function (a, b) {
       return b.votes - a.votes;
     });
