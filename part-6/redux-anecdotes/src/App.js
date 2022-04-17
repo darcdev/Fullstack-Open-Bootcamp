@@ -6,9 +6,9 @@ const App = () => {
   return (
     <div>
       <h2>Anecdotes</h2>
+      <Notification />
       <AnecdoteList />
       <AnecdoteForm />
-      <Notification />
     </div>
   );
 };
