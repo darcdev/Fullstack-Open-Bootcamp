@@ -5,7 +5,9 @@ import {
   Route,
   Routes,
   useParams,
+  useNavigate,
 } from 'react-router-dom';
+import Message from './Message';
 const Menu = () => {
   const padding = {
     paddingRight: 5,
@@ -40,7 +42,7 @@ const Anecdote = ({ anecdotes }) => {
       <p>
         Has {anecdote.votes} vote{anecdote.votes !== 1 && 's'}
       </p>
-      for more info see <a href={anecdote.url}>{anecdote.url}</a>
+      for more info see <a href={anecdote.info}>{anecdote.info}</a>
     </div>
   );
 };
@@ -92,6 +94,7 @@ const Footer = () => (
 );
 
 const CreateNew = (props) => {
+  const navigate = useNavigate();
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
   const [info, setInfo] = useState('');
@@ -104,6 +107,7 @@ const CreateNew = (props) => {
       info,
       votes: 0,
     });
+    navigate('/');
   };
 
   return (
@@ -163,6 +167,7 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000);
     setAnecdotes(anecdotes.concat(anecdote));
+    setNotification(`a new anecdote ${anecdote.content} created!`);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -183,6 +188,7 @@ const App = () => {
       <h1>Software anecdotes</h1>
       <Router>
         <Menu />
+        <Message message={notification} />
         <Routes>
           <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
           <Route
