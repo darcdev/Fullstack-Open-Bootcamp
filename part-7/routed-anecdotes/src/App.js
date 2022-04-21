@@ -96,16 +96,16 @@ const Footer = () => (
 
 const CreateNew = (props) => {
   const navigate = useNavigate();
-  const [content, setContent] = useField('text');
-  const [author, setAuthor] = useField('text');
-  const [info, setInfo] = useField('text');
+  const [content, fnsContent] = useField('text');
+  const [info, fnsInfo] = useField('text');
+  const [author, fnsAuthor] = useField('text');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0,
     });
     navigate('/');
@@ -128,6 +128,16 @@ const CreateNew = (props) => {
           <input name="info" {...info} />
         </div>
         <button>create</button>
+        <button
+          type="reset"
+          onClick={() => {
+            fnsContent.reset();
+            fnsInfo.reset();
+            fnsAuthor.reset();
+          }}
+        >
+          reset
+        </button>
       </form>
     </div>
   );
