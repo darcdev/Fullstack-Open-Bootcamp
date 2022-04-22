@@ -1,7 +1,8 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMatch, useNavigate } from 'react-router-dom';
-import { deleteBlog, changeBlog } from '../reducers/blog.reducer';
+import useField from '../hooks/useField';
+import { deleteBlog, changeBlog, addComment } from '../reducers/blog.reducer';
 
 const Blog = () => {
   const dispatch = useDispatch();
@@ -10,6 +11,8 @@ const Blog = () => {
   const blogs = useSelector((state) => state.blogs);
   const matchBlog = useMatch('/blogs/:id');
   const blog = matchBlog ? blogs.find((user) => user.id === matchBlog.params.id) : null;
+
+  const comment = useField('text');
 
   const removeBlog = async () => {
     const responseDelete = window.confirm(`Remove blog ${blog.title} by ${blog.author}`);
@@ -27,12 +30,20 @@ const Blog = () => {
     );
   };
 
+  const handleSubmitComment = async (event) => {
+    event.preventDefault();
+    if (!comment.value) {
+      return;
+    }
+    dispatch(addComment({ blogId: blog.id, comment: comment.value }));
+  };
+
   if (!user || !blog) {
     return null;
   }
 
   return (
-    <div className="blog-container" style={{ border: '1px solid black', marginBottom: 5 }}>
+    <div className="blog-container">
       <h3>
         {blog.title} by {blog.author}
       </h3>
@@ -45,11 +56,17 @@ const Blog = () => {
         <button onClick={() => removeBlog(blog)}>Remove</button>
       )}
       <h4>Comments</h4>
+
+      <form onSubmit={handleSubmitComment}>
+        <input {...comment} />
+        <button>Add coment</button>
+      </form>
+
       <ul>
         {blog.comments &&
           blog.comments.map((comment, index) => <li key={blog.id + index}>{comment}</li>)}
       </ul>
-      {!blog.comments && <p>No hay comentarios para este blog</p>}
+      {blog.comments && !blog.comments.length > 0 && <p>No hay comentarios para este blog</p>}
     </div>
   );
 };

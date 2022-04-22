@@ -65,5 +65,18 @@ export const changeBlog = (changedBlog) => {
   };
 };
 
+export const addComment = ({ blogId, comment }) => {
+  return async (dispatch, getState) => {
+    try {
+      const { blog: updatedBlog } = await blogService.addComent({ blogId, comment });
+      const { blogs } = getState();
+      const updateBlogs = blogs.map((blog) => (blog.id !== updatedBlog.id ? blog : updatedBlog));
+      dispatch(setBlogs(updateBlogs));
+    } catch (error) {
+      console.log('Ha ocurrido un error al actualizar el blog');
+    }
+  };
+};
+
 export const { setBlogs, createBlog } = blogsReducer.actions;
 export default blogsReducer.reducer;
