@@ -44,6 +44,12 @@ const Blog = () => {
       {user.username === blog.user.username && (
         <button onClick={() => removeBlog(blog)}>Remove</button>
       )}
+      <h4>Comments</h4>
+      <ul>
+        {blog.comments &&
+          blog.comments.map((comment, index) => <li key={blog.id + index}>{comment}</li>)}
+      </ul>
+      {!blog.comments && <p>No hay comentarios para este blog</p>}
     </div>
   );
 };
