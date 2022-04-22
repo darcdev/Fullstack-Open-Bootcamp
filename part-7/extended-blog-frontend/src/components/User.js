@@ -5,7 +5,6 @@ import { useMatch } from 'react-router-dom';
 const User = () => {
   const users = useSelector((state) => state.users);
   const matchUser = useMatch('/users/:id');
-  console.log('ss');
   const user = matchUser ? users.find((user) => user.id === matchUser.params.id) : null;
   if (!user) {
     return null;

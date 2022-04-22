@@ -8,6 +8,8 @@ import { addInfoUser } from './reducers/user.reducer.js';
 import Users from './components/Users';
 import User from './components/User';
 import { initializeUsers } from './reducers/users.reducer';
+import Blog from './components/Blog';
+import { initializeBlogs } from './reducers/blog.reducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -21,9 +23,9 @@ const App = () => {
       blogService.setToken(user.token);
     }
   }, []);
-
   useEffect(() => {
     dispatch(initializeUsers());
+    dispatch(initializeBlogs());
   }, []);
 
   const handleClose = () => {
@@ -41,10 +43,11 @@ const App = () => {
         </div>
       )}
       <Routes>
-        <Route path="/" element={user ? <Users /> : <Login />} />
+        <Route path="/" element={user ? <Blogs /> : <Login />} />
+        <Route path="/blogs/:id" element={user ? <Blog /> : <Navigate redirect to={<Login />} />} />
         <Route path="/blogs" element={user ? <Blogs /> : <Navigate redirect to={<Login />} />} />
-        <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User />} />
+        <Route path="/users" element={<Users />} />
       </Routes>
     </div>
   );

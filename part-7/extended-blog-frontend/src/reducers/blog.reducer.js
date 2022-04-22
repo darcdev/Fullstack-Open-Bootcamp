@@ -45,6 +45,7 @@ export const addBlog = ({ title, author, url }) => {
       });
       dispatch(createBlog(blog));
       dispatch(addNotification(`A new Blog ${title} by ${author} added`, 5));
+      dispatch(initializeBlogs());
     } catch (error) {
       dispatch(addNotification('Ha ocurrido un error al crear el blog', 5));
     }

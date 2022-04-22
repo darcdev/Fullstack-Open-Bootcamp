@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
+import { useMatch, useNavigate } from 'react-router-dom';
 import { deleteBlog, changeBlog } from '../reducers/blog.reducer';
 
-const Blog = ({ blog }) => {
+const Blog = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user);
-  const [detailsVisible, setDetailsVisible] = useState(false);
-
-  const showVisible = { display: detailsVisible ? '' : 'none' };
+  const blogs = useSelector((state) => state.blogs);
+  const matchBlog = useMatch('/blogs/:id');
+  const blog = matchBlog ? blogs.find((user) => user.id === matchBlog.params.id) : null;
 
   const removeBlog = async () => {
     const responseDelete = window.confirm(`Remove blog ${blog.title} by ${blog.author}`);
     if (!responseDelete) return;
     dispatch(deleteBlog(blog.id));
+    navigate('/');
   };
 
   const updateBlog = async () => {
@@ -25,30 +27,25 @@ const Blog = ({ blog }) => {
     );
   };
 
+  if (!user || !blog) {
+    return null;
+  }
+
   return (
     <div className="blog-container" style={{ border: '1px solid black', marginBottom: 5 }}>
       <h3>
         {blog.title} by {blog.author}
-        <button onClick={() => setDetailsVisible(!detailsVisible)}>
-          {detailsVisible ? 'Hide' : 'View'}
-        </button>
       </h3>
-      <div className="details-blog" style={showVisible}>
-        <p>Url : {blog.url}</p>
-        <p>
-          Likes : {blog.likes} <button onClick={updateBlog}>Like</button>
-        </p>
-        <p>Author : {blog.author}</p>
-        {user.username === blog.user.username && (
-          <button onClick={() => removeBlog(blog)}>Remove</button>
-        )}
-      </div>
+      <p>Url : {blog.url}</p>
+      <p>
+        Likes : {blog.likes} <button onClick={updateBlog}>Like</button>
+      </p>
+      <p>Author : {blog.author}</p>
+      {user.username === blog.user.username && (
+        <button onClick={() => removeBlog(blog)}>Remove</button>
+      )}
     </div>
   );
-};
-
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired
 };
 
 export default Blog;
