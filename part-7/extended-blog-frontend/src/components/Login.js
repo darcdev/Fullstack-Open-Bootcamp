@@ -1,27 +1,20 @@
 import React, { useState } from 'react';
-import loginService from '../services/login';
-import blogService from '../services/blogs';
+import { useDispatch } from 'react-redux';
 import Notification from '../components/Notification';
+import { loginUser } from '../reducers/user.reducer';
 
-const Login = ({ setUser }) => {
+const Login = () => {
+  const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const user = await loginService.login({ username, password });
-      window.localStorage.setItem('loggedUser', JSON.stringify(user));
-      blogService.setToken(user.token);
-      setError('');
-      setUser(user);
-      setUsername('');
-      setPassword('');
-    } catch (error) {
-      console.log(error);
-      setError('Wrong credentials');
-    }
+    dispatch(loginUser({ username, password }));
+    setError('');
+    setUsername('');
+    setPassword('');
   };
 
   return (
