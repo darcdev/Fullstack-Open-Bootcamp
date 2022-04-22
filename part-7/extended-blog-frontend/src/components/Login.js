@@ -7,14 +7,10 @@ const Login = () => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     dispatch(loginUser({ username, password }));
-    setError('');
-    setUsername('');
-    setPassword('');
   };
 
   return (
@@ -46,8 +42,7 @@ const Login = () => {
           login
         </button>
       </form>
-
-      {error.length > 0 && <Notification message={error} setError={setError} />}
+      <Notification />
     </>
   );
 };

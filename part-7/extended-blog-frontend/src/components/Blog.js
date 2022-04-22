@@ -1,20 +1,29 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import { deleteBlog, changeBlog } from '../reducers/blog.reducer';
 
-const Blog = ({ blog, removeBlog, updateBlog }) => {
+const Blog = ({ blog }) => {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
   const [detailsVisible, setDetailsVisible] = useState(false);
 
   const showVisible = { display: detailsVisible ? '' : 'none' };
 
-  const updateLikes = async () => {
-    updateBlog({
-      ...blog,
-      likes: blog.likes + 1
-    });
+  const removeBlog = async () => {
+    const responseDelete = window.confirm(`Remove blog ${blog.title} by ${blog.author}`);
+    if (!responseDelete) return;
+    dispatch(deleteBlog(blog.id));
   };
 
-  const userStorage = window.localStorage.getItem('loggedUser');
-  const user = userStorage ? JSON.parse(userStorage) : '';
+  const updateBlog = async () => {
+    dispatch(
+      changeBlog({
+        ...blog,
+        likes: blog.likes + 1
+      })
+    );
+  };
 
   return (
     <div className="blog-container" style={{ border: '1px solid black', marginBottom: 5 }}>
@@ -27,7 +36,7 @@ const Blog = ({ blog, removeBlog, updateBlog }) => {
       <div className="details-blog" style={showVisible}>
         <p>Url : {blog.url}</p>
         <p>
-          Likes : {blog.likes} <button onClick={updateLikes}>Like</button>
+          Likes : {blog.likes} <button onClick={updateBlog}>Like</button>
         </p>
         <p>Author : {blog.author}</p>
         {user.username === blog.user.username && (
@@ -39,8 +48,7 @@ const Blog = ({ blog, removeBlog, updateBlog }) => {
 };
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  removeBlog: PropTypes.func.isRequired
+  blog: PropTypes.object.isRequired
 };
 
 export default Blog;

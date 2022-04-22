@@ -1,20 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
-const Notification = ({ message, setError }) => {
-  useEffect(() => {
-    setTimeout(() => {
-      setError(false);
-    }, 2000);
-  }, []);
+const Notification = () => {
+  const message = useSelector((state) => state.notification.message);
 
-  if (message === null) {
-    return null;
-  }
+  if (!message) return null;
 
-  return (
-    <div>
-      <p>{message}</p>
-    </div>
-  );
+  return <div>{message}</div>;
 };
 export default Notification;

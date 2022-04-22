@@ -1,38 +1,29 @@
 import React, { useState } from 'react';
-import blogService from '../services/blogs';
 import Notification from './Notification';
+import { addBlog } from '../reducers/blog.reducer';
+import { useDispatch } from 'react-redux';
+import { addNotification } from '../reducers/notification.reducer';
 
-const NewBlog = ({ setBlogs }) => {
+const NewBlog = () => {
+  const dispatch = useDispatch();
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
-  const [error, setError] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (title.length === 0 || author.length === 0 || url.length === 0) {
-      setError('Debe llenar todos los campos');
+      dispatch(addNotification('Debe rellenar todos los campos', 5));
       return;
     }
-    setError('');
-
-    try {
-      const { blog } = await blogService.create({
-        title,
-        author,
-        url
-      });
-      setBlogs((blogs) => [...blogs, blog]);
-      setError(`A new Blog ${title} by ${author} added`);
-    } catch (error) {
-      setError('Error creating a new blog');
-    }
+    dispatch(addNotification('', 0));
+    dispatch(addBlog({ title, author, url }));
   };
 
   return (
     <>
-      {error.length > 0 && <Notification message={error} setError={setError} />}
+      <Notification />
 
       <h2>Create new</h2>
       <form onSubmit={handleSubmit}>
