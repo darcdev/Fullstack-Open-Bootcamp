@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import Login from './components/Login';
 import Blogs from './components/Blogs';
 import blogService from './services/blogs';
@@ -35,13 +35,25 @@ const App = () => {
   return (
     <div>
       <h1>Blogs App</h1>
+      <header>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/blogs">blogs</Link>
+            </li>
+            <li>
+              <Link to="/users">users</Link>
+            </li>
+          </ul>
+        </nav>
+        {user && (
+          <div>
+            <span>{user.username} logged in </span>
+            <button onClick={handleClose}>Cerrar Sesión</button>
+          </div>
+        )}
+      </header>
 
-      {user && (
-        <div>
-          <span>{user.username} logged in </span>
-          <button onClick={handleClose}>Cerrar Sesión</button>
-        </div>
-      )}
       <Routes>
         <Route path="/" element={user ? <Blogs /> : <Login />} />
         <Route path="/blogs/:id" element={user ? <Blog /> : <Navigate redirect to={<Login />} />} />
