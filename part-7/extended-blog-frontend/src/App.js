@@ -10,7 +10,32 @@ import User from './components/User';
 import { initializeUsers } from './reducers/users.reducer';
 import Blog from './components/Blog';
 import { initializeBlogs } from './reducers/blog.reducer';
+import styled from 'styled-components';
 
+const Header = styled.header`
+  background-color: gray;
+  padding: 0.4rem;
+`;
+const Nav = styled.nav`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+const MenuList = styled.ul`
+  display: flex;
+  flex: 2;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+`;
+const MenuElement = styled.li`
+  max-width: 3rem;
+  flex: 1;
+`;
+const Logged = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
 const App = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
@@ -34,25 +59,28 @@ const App = () => {
   };
   return (
     <div>
-      <h1>Blogs App</h1>
-      <header>
-        <nav>
-          <ul>
-            <li>
+      <Header>
+        <Nav>
+          <MenuList>
+            <MenuElement>
               <Link to="/blogs">blogs</Link>
-            </li>
-            <li>
+            </MenuElement>
+            <MenuElement>
               <Link to="/users">users</Link>
-            </li>
-          </ul>
-        </nav>
-        {user && (
-          <div>
-            <span>{user.username} logged in </span>
-            <button onClick={handleClose}>Cerrar Sesión</button>
-          </div>
-        )}
-      </header>
+            </MenuElement>
+          </MenuList>
+
+          <Logged style={{ flex: '1' }}>
+            {user && (
+              <>
+                <span>{user.username} logged in </span>
+                <button onClick={handleClose}>Cerrar Sesión</button>
+              </>
+            )}
+          </Logged>
+        </Nav>
+      </Header>
+      <h1>Blogs App</h1>
 
       <Routes>
         <Route path="/" element={user ? <Blogs /> : <Login />} />
