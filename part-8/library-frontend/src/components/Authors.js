@@ -1,16 +1,18 @@
 import {useMutation, useQuery} from '@apollo/client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EDIT_AUTHOR } from '../graphql/mutations.js';
 import { ALL_AUTHORS } from '../graphql/queries.js';
+import Select from 'react-select';
 
 const Authors = (props) => {
-  const [name, setName] = useState('');
+  const [value, setValue] = useState('');
   const [born, setBorn] = useState('');
-  
+  const authors = useQuery(ALL_AUTHORS);
+  const options = authors.data && authors.data.allAuthors.map(author => ({value : author.name , label : author.name}))
+
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
     refetchQueries : [{query : ALL_AUTHORS}]
   });
-  const authors = useQuery(ALL_AUTHORS) ;
   
   if (!props.show) {
     return null
@@ -22,10 +24,9 @@ const Authors = (props) => {
   
    const submit = async (event) => {
     event.preventDefault()
+    editAuthor({variables : {name : value.value , setBornTo : Number(born)}})
     
-    editAuthor({variables : {name , setBornTo : Number(born)}})
-
-    setName('')
+    setValue('');
     setBorn('')
   }
 
@@ -53,10 +54,12 @@ const Authors = (props) => {
          <form onSubmit={submit}>
         <div>
           Name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
+            <Select
+        value={value}
+        onChange={(selectedOption) => setValue(selectedOption) }
+        options={options}
+              
+      />
         </div>
         <div>
           Born  
