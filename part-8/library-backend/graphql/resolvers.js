@@ -1,8 +1,6 @@
-const {v1 : uuid} =  require('uuid')
 const Book = require('../models/Book');
 const Author = require('../models/Author');
-
-const { authors, books } = require('../data');
+const { UserInputError } = require('apollo-server');
 
 const resolvers = {
   Query: {
@@ -33,12 +31,19 @@ const resolvers = {
   Mutation: {
       addBook: async (obj, args) => {
         let author = await Author.findOne({ name: args.author });
-        if (!author) {
-            author = new Author({ name: args.author, born: null });
-            author.save();
-        }
-        const book = new Book({ ...args , author : author._id });
-        return book.save();
+          try {
+              if (!author) {
+                  author = new Author({ name: args.author, born: null });
+                  await author.save();
+              }
+              const book = new Book({ ...args, author: author._id });
+              return await book.save();
+          }
+          catch (error) {
+               throw new UserInputError(error.message, {
+                      invalidArgs : args
+                  })
+            }
     },
     editAuthor : async (obj, args) => {
       let author = await Author.findOne({name : args.name});
