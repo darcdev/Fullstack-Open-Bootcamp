@@ -1,10 +1,10 @@
-import {useQuery} from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { ALL_BOOKS } from '../graphql/queries.js';
 
 const Books = (props) => {
 
   const books = useQuery(ALL_BOOKS);
-  
+
   if (!props.show) {
     return null
   }
@@ -27,7 +27,7 @@ const Books = (props) => {
           {books.data.allBooks.map((a) => (
             <tr key={a.id}>
               <td>{a.title}</td>
-              <td>{a.author}</td>
+              <td>{a.author.name}</td>
               <td>{a.published}</td>
             </tr>
           ))}
