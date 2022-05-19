@@ -1,16 +1,19 @@
+import { useApolloClient } from '@apollo/client'
 import { useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import Login from './components/Login'
 import NewBook from './components/NewBook'
-
 const App = () => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null);
+  const client = useApolloClient();
 
   const logout = () => {
     setToken(null);
-    setPage('login')
+    localStorage.clear();
+    client.resetStore();
+    setPage('login');
   }
 
   return (

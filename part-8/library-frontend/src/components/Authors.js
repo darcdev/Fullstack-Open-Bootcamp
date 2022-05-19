@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { EDIT_AUTHOR } from '../graphql/mutations.js';
 import { ALL_AUTHORS } from '../graphql/queries.js';
 import Select from 'react-select';
