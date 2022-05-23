@@ -7,6 +7,7 @@ const Books = (props) => {
   const booksCategories = useQuery(ALL_BOOKS);
   const [getBooks, books] = useLazyQuery(ALL_BOOKS);
   const [genres, setGenres] = useState([]);
+  const [actualBooks, setActualBooks] = useState([]);
   const [genre, setGenre] = useState('');
 
   useEffect(() => {
@@ -20,8 +21,11 @@ const Books = (props) => {
   }, [booksCategories.data]) //eslint-disable-line
 
   useEffect(() => {
+    if (books.data) {
+      setActualBooks(books.data.allBooks);
+    }
     getBooks({ variables: { genre } })
-  }, [genre]) //eslint-disable-line
+  }, [genre, books.data]) //eslint-disable-line
 
   if (!props.show) {
     return null
@@ -53,7 +57,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.data.allBooks.map((a) => (
+          {actualBooks.map((a) => (
             <tr key={a.id}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>

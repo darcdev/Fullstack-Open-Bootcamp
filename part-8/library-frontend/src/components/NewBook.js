@@ -6,7 +6,14 @@ import { ALL_AUTHORS, ALL_BOOKS } from '../graphql/queries';
 const NewBook = (props) => {
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS },{ query : ALL_AUTHORS}]
+    refetchQueries: [{ query: ALL_AUTHORS }],
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(response.data.addBook)
+        }
+      })
+    }
   });
 
   const [title, setTitle] = useState('')
@@ -21,8 +28,8 @@ const NewBook = (props) => {
 
   const submit = async (event) => {
     event.preventDefault()
-    
-    createBook({variables : {title, author, published : Number(published), genres}})
+
+    createBook({ variables: { title, author, published: Number(published), genres } })
 
     setTitle('')
     setPublished('')
