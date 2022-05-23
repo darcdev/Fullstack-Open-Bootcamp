@@ -1,9 +1,30 @@
 import { useQuery } from '@apollo/client'
+import { useEffect, useState } from 'react';
 import { ALL_BOOKS } from '../graphql/queries.js';
 
 const Books = (props) => {
 
   const books = useQuery(ALL_BOOKS);
+  const [genres, setGenres] = useState([]);
+  const [filterBooks, setFilterBooks] = useState([]);
+  const [genre, setGenre] = useState('');
+
+  useEffect(() => {
+    if (books.data) {
+      const genresMap = new Set();
+      const allBooks = books.data.allBooks;
+      allBooks.map(book => book.genres.map(genre => genresMap.add(genre)));
+      setGenres([...genresMap])
+      setGenre('');
+    }
+  }, [books.data])
+
+  const handleChangeGenre = (event) => {
+    const genre = event.target.value;
+    const filterBooks = books.data.allBooks.filter(book => book.genres.includes(genre));
+    setFilterBooks(filterBooks);
+    setGenre(genre);
+  }
 
   if (!props.show) {
     return null
@@ -13,10 +34,18 @@ const Books = (props) => {
     return <div>Loading</div>
   }
 
+  const showBooks = !genre ? books.data.allBooks : filterBooks
+
   return (
     <div>
       <h2>books</h2>
-
+      <div>
+        <p>Filtrar Libros por:</p>
+        <select onChange={handleChangeGenre}>
+          <option value={""}>all genres</option>
+          {genres.map(genre => <option key={genre} value={genre}>{genre}</option>)}
+        </select>
+      </div>
       <table>
         <tbody>
           <tr>
@@ -24,7 +53,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.data.allBooks.map((a) => (
+          {showBooks.map((a) => (
             <tr key={a.id}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
