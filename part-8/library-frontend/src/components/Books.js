@@ -11,7 +11,6 @@ const Books = (props) => {
 
   useEffect(() => {
     if (books.data) {
-      console.log(books.data);
       const genresMap = new Set();
       const allBooks = books.data.allBooks;
       allBooks.map(book => book.genres.map(genre => genresMap.add(genre)));

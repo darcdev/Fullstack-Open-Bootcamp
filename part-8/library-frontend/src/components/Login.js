@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { LOGIN } from "../graphql/mutations";
 
 
-const Login = ({ setToken, setPage, show }) => {
+const Login = ({ setToken, setUser, setPage, show }) => {
 
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -13,6 +13,7 @@ const Login = ({ setToken, setPage, show }) => {
         if (result.data) {
             const token = result.data.login.value;
             setToken(token);
+            setUser(name);
             localStorage.setItem('library-user-token', token);
             setPage('authors')
         }
