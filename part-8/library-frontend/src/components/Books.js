@@ -11,6 +11,7 @@ const Books = (props) => {
 
   useEffect(() => {
     if (books.data) {
+      console.log(books.data);
       const genresMap = new Set();
       const allBooks = books.data.allBooks;
       allBooks.map(book => book.genres.map(genre => genresMap.add(genre)));
@@ -19,15 +20,15 @@ const Books = (props) => {
     }
   }, [books.data])
 
+  if (!props.show) {
+    return null
+  }
+
   const handleChangeGenre = (event) => {
     const genre = event.target.value;
     const filterBooks = books.data.allBooks.filter(book => book.genres.includes(genre));
     setFilterBooks(filterBooks);
     setGenre(genre);
-  }
-
-  if (!props.show) {
-    return null
   }
 
   if (books.loading) {
@@ -41,7 +42,7 @@ const Books = (props) => {
       <h2>books</h2>
       <div>
         <p>Filtrar Libros por:</p>
-        <select onChange={handleChangeGenre}>
+        <select defaultValue={genre} onChange={handleChangeGenre}>
           <option value={""}>all genres</option>
           {genres.map(genre => <option key={genre} value={genre}>{genre}</option>)}
         </select>
