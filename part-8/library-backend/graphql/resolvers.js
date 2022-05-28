@@ -1,9 +1,12 @@
+const { PubSub } = require('graphql-subscriptions');
+const { UserInputError, AuthenticationError } = require('apollo-server');
 const jwt = require('jsonwebtoken');
 const Book = require('../models/Book');
 const Author = require('../models/Author');
 const User = require('../models/User');
 const config = require('../config');
-const { UserInputError, AuthenticationError } = require('apollo-server');
+const pubsub = new PubSub();
+
 
 const resolvers = {
   Query: {
@@ -36,6 +39,7 @@ const resolvers = {
   Mutation: {
     addBook: async (obj, args, { currentUser }) => {
       let author = await Author.findOne({ name: args.author });
+      let book;
       if (!currentUser) {
         throw new AuthenticationError('Not authenticated');
       }
@@ -44,14 +48,17 @@ const resolvers = {
           author = new Author({ name: args.author, born: null });
           await author.save();
         }
-        const book = new Book({ ...args, author: author._id });
-        return await book.save();
+        book = new Book({ ...args, author: author._id });
+        await book.save();
       }
       catch (error) {
         throw new UserInputError(error.message, {
           invalidArgs: args
         })
       }
+      pubsub.publish('BOOK_ADDED', { bookAdded: book })
+      return book;
+
     },
     editAuthor: async (obj, args, { currentUser }) => {
       let author = await Author.findOne({ name: args.name });
@@ -82,6 +89,11 @@ const resolvers = {
         id: user._id
       }
       return { value: jwt.sign(userForToken, config.jwt.secret) }
+    }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
     }
   }
 }
