@@ -1,15 +1,30 @@
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
 import { useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import Login from './components/Login'
 import NewBook from './components/NewBook'
 import Recommended from './components/Recommended'
+import { ALL_BOOKS } from './graphql/queries'
+import { BOOK_ADDED } from './graphql/subscription.js';
+
 const App = () => {
   const [page, setPage] = useState('authors')
   const [user, setUser] = useState('');
   const [token, setToken] = useState(null);
   const client = useApolloClient();
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedBook = subscriptionData.data.bookAdded;
+      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(addedBook)
+        }
+      })
+    }
+  })
+
 
   const logout = () => {
     setToken(null);

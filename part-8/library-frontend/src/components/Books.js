@@ -5,6 +5,7 @@ import { ALL_BOOKS } from '../graphql/queries.js';
 const Books = (props) => {
 
   const booksCategories = useQuery(ALL_BOOKS);
+
   const [getBooks, books] = useLazyQuery(ALL_BOOKS);
   const [genres, setGenres] = useState([]);
   const [actualBooks, setActualBooks] = useState([]);
