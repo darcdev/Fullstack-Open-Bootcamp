@@ -13,7 +13,7 @@ interface DiagnosticResult {
 
 function calculateExercises(hoursByDay: Array<number>, target: number): DiagnosticResult {
     
-    const periodLength = hoursByDay.length;
+    const periodLength:number = hoursByDay.length;
     const average: number = hoursByDay.reduce((elem, acc) => acc + elem, 0) / periodLength;
     const trainingDays: number = hoursByDay.filter(day => day > 0).length;
     let success:boolean = false;
