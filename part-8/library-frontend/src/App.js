@@ -7,6 +7,7 @@ import NewBook from './components/NewBook'
 import Recommended from './components/Recommended'
 import { ALL_BOOKS } from './graphql/queries'
 import { BOOK_ADDED } from './graphql/subscription.js';
+import { updateCache } from './utils/updateCache'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -14,14 +15,10 @@ const App = () => {
   const [token, setToken] = useState(null);
   const client = useApolloClient();
 
-  useSubscription(BOOK_ADDED, {
+  const bookAdded = useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
       const addedBook = subscriptionData.data.bookAdded;
-      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
-        return {
-          allBooks: allBooks.concat(addedBook)
-        }
-      })
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
     }
   })
 
