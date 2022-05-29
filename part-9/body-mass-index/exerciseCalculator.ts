@@ -23,13 +23,13 @@ function calculateExercises(hoursByDay: Array<number>, target: number): Diagnost
     
     if (average >= target) {
         rating = 3;
-        ratingDescription = "Congratulations,You are awesome!!";
+        ratingDescription = "Congratulations, you accomplished your exercise goals for this week!";
     } else if (average > target * 0.50) {
         rating = 2;
         ratingDescription = "not too bad but could be better";
     } else {
         rating = 1
-        ratingDescription = "Not Good, But you can improve";
+        ratingDescription = "Not Good, you didnt reach your exercise goal, Try again next week";
     }
 
     return {
@@ -43,4 +43,4 @@ function calculateExercises(hoursByDay: Array<number>, target: number): Diagnost
     }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5,0,3,1], 2));
+console.log(calculateExercises([3, 0, 2, 4.5,0,3,1], 6));
