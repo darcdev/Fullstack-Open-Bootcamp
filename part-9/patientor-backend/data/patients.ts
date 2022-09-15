@@ -39,7 +39,7 @@ const patients = [
         "name": "Matti Luukkainen",
         "dateOfBirth": "1971-04-09",
         "ssn": "090471-8890",
-        "gender": "male",
+        "gender": "other",
         "occupation": "Digital evangelist"
     }
 ];
