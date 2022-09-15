@@ -5,20 +5,20 @@ import { Gender, Patient } from '../types';
 import { apiBaseUrl } from '../constants';
 import { Typography } from '@material-ui/core';
 import { Male, Female, Transgender } from '@mui/icons-material';
+import { useStateValue } from '../state';
 
 const PatientById = () => {
     const { id: patientId } = useParams<{ id: string }>();
-    const [patient, setPatient] = React.useState<Patient | null>(null);
+    const [{ patient }, dispatch] = useStateValue();
 
     React.useEffect(() => {
         const fetchPatientById = async () => {
-            if (patientId) {
+            if (patientId && patientId !== patient?.id) {
                 const { data } = await axios.get<Patient>(`${apiBaseUrl}/patients/${patientId}`);
-                setPatient(data);
+                dispatch({ type: "UPDATE_ACTUAL_PATIENT", payload: data });
             }
         };
         void fetchPatientById();
-
     }, []);
 
     return (
