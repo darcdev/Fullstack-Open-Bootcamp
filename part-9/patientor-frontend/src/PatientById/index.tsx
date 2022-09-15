@@ -5,7 +5,7 @@ import { Gender, Patient } from '../types';
 import { apiBaseUrl } from '../constants';
 import { Typography } from '@material-ui/core';
 import { Male, Female, Transgender } from '@mui/icons-material';
-import { useStateValue } from '../state';
+import { updateActualPatient, useStateValue } from '../state';
 
 const PatientById = () => {
     const { id: patientId } = useParams<{ id: string }>();
@@ -15,7 +15,7 @@ const PatientById = () => {
         const fetchPatientById = async () => {
             if (patientId && patientId !== patient?.id) {
                 const { data } = await axios.get<Patient>(`${apiBaseUrl}/patients/${patientId}`);
-                dispatch({ type: "UPDATE_ACTUAL_PATIENT", payload: data });
+                dispatch(updateActualPatient(data));
             }
         };
         void fetchPatientById();
