@@ -6,6 +6,7 @@ import { apiBaseUrl } from '../constants';
 import { Typography } from '@material-ui/core';
 import { Male, Female, Transgender } from '@mui/icons-material';
 import { updateActualPatient, useStateValue } from '../state';
+import EntryDetails from '../components/EntryDetails';
 
 const PatientById = () => {
     const { id: patientId } = useParams<{ id: string }>();
@@ -36,17 +37,9 @@ const PatientById = () => {
                         Entries
                     </Typography>
                     <div>
-                        {patient.entries.length > 0 && patient.entries.map(patient => {
-                            return <div key={patient.id}>
-                                <p>{patient.date}</p>
-                                <p>{patient.description}</p>
-                                <ul>
-                                    {patient.diagnosisCodes?.map(code => {
-                                        const descriptionCode = diagnostics[code]?.name;
-                                        return <li key={code}>{code} {descriptionCode}</li>;
-                                    })}
-                                </ul>
-
+                        {patient.entries.length > 0 && patient.entries.map(entry => {
+                            return <div key={entry.id}>
+                                <EntryDetails entry={entry} diagnostics={diagnostics} />
                             </div>;
                         })}
                     </div>
