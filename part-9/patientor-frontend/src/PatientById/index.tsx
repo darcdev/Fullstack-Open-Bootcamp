@@ -9,7 +9,7 @@ import { updateActualPatient, useStateValue } from '../state';
 
 const PatientById = () => {
     const { id: patientId } = useParams<{ id: string }>();
-    const [{ patient }, dispatch] = useStateValue();
+    const [{ patient, diagnostics }, dispatch] = useStateValue();
 
     React.useEffect(() => {
         const fetchPatientById = async () => {
@@ -36,13 +36,14 @@ const PatientById = () => {
                         Entries
                     </Typography>
                     <div>
-                        {patient.entries.map(patient => {
+                        {patient.entries.length > 0 && patient.entries.map(patient => {
                             return <div key={patient.id}>
                                 <p>{patient.date}</p>
                                 <p>{patient.description}</p>
                                 <ul>
                                     {patient.diagnosisCodes?.map(code => {
-                                        return <li key={code}>{code}</li>;
+                                        const descriptionCode = diagnostics[code]?.name;
+                                        return <li key={code}>{code} {descriptionCode}</li>;
                                     })}
                                 </ul>
 
