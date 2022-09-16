@@ -31,6 +31,25 @@ const PatientById = () => {
                     <p><strong>ssn: </strong>{patient.ssn}</p>
                     <p><strong>occupation: </strong>{patient.occupation}</p>
                 </div>
+                <div>
+                    <Typography variant="h6">
+                        Entries
+                    </Typography>
+                    <div>
+                        {patient.entries.map(patient => {
+                            return <div key={patient.id}>
+                                <p>{patient.date}</p>
+                                <p>{patient.description}</p>
+                                <ul>
+                                    {patient.diagnosisCodes?.map(code => {
+                                        return <li key={code}>{code}</li>;
+                                    })}
+                                </ul>
+
+                            </div>;
+                        })}
+                    </div>
+                </div>
             </div> : <Typography variant="h4">
                 Paciente No existe
             </Typography>}
