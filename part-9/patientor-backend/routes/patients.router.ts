@@ -51,6 +51,8 @@ router.post('/:id/entries', (req, res) => {
         if (patient && newEntry) {
             const addEntry = patientsService.addEntryPatient(patient, newEntry);
             res.json(addEntry);
+        } else {
+            throw new Error('Invalid params or values');
         }
     } catch (error: unknown) {
         let errorMessage = 'Somewthing went wrong.';
