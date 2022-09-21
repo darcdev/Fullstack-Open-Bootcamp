@@ -3,15 +3,40 @@ import { useParams } from "react-router-dom";
 import axios from 'axios';
 import { Gender, Patient } from '../types';
 import { apiBaseUrl } from '../constants';
-import { Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { Male, Female, Transgender } from '@mui/icons-material';
-import { updateActualPatient, useStateValue } from '../state';
+import { addEntry, updateActualPatient, useStateValue } from '../state';
 import EntryDetails from '../components/EntryDetails';
+import AddEntryModal from '../AddEntryModal';
+import { EntryFormValues } from '../AddEntryModal/AddEntryForm';
 
 const PatientById = () => {
     const { id: patientId } = useParams<{ id: string }>();
     const [{ patient, diagnostics }, dispatch] = useStateValue();
+    const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+    const openModal = (): void => setModalOpen(true);
+    const closeModal = (): void => {
+        setModalOpen(false);
+    };
 
+    const submitNewEntry = async (values: EntryFormValues) => {
+        try {
+            const { data: newEntry } = await axios.post<Patient>(
+                `${apiBaseUrl}/patients/${patientId || ""}/entries`,
+                values
+            );
+            dispatch(addEntry(newEntry));
+            closeModal();
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                console.error(e?.response?.data || "Unrecognized axios error");
+                //setError(String(e?.response?.data?.error) || "Unrecognized axios error");
+            } else {
+                console.error("Unknown error", e);
+                //setError("Unknown error");
+            }
+        }
+    };
     React.useEffect(() => {
         const fetchPatientById = async () => {
             if (patientId && patientId !== patient?.id) {
@@ -36,6 +61,10 @@ const PatientById = () => {
                     <Typography variant="h6">
                         Entries
                     </Typography>
+                    <Button variant="contained" style={{ marginBottom: "1rem", marginTop: "1rem" }} onClick={() => openModal()}>
+                        Add New Entry
+                    </Button>
+                    <AddEntryModal onClose={closeModal} onSubmit={submitNewEntry} modalOpen={modalOpen} />
                     <div>
                         {patient.entries.length > 0 && patient.entries.map(entry => {
                             return <div key={entry.id}>
@@ -51,5 +80,6 @@ const PatientById = () => {
         </div>
     );
 };
+
 
 export default PatientById;

@@ -66,3 +66,12 @@ export interface Patient {
   dateOfBirth?: string;
   entries: Entry[]
 }
+
+export enum TypesEntry {
+  HealthCheck = 'HealthCheck',
+  OccupationalHealthcare = 'OccupationalHealthcare',
+  Hospital = 'Hospital'
+}
+
+
+export type NewEntry = | Omit<HospitalEntry, "id"> | Omit<OccupationalHealthcareEntry, "id"> | Omit<HealthCheckEntry, "id">;
