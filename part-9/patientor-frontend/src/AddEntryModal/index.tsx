@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogTitle, Divider } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import AddEntryForm, { EntryFormValues } from "./AddEntryForm";
+import { EntryFormValues } from "../types";
+import AddEntryForm from "./AddEntryForm";
 
 interface Props {
     onSubmit: (values: EntryFormValues) => void;

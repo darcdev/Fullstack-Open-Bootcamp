@@ -26,7 +26,7 @@ export enum healthRatingColorsType {
 }
 
 export interface BaseEntry {
-  id: string;
+  id?: string;
   description: string;
   date: string;
   specialist: string;
@@ -73,5 +73,18 @@ export enum TypesEntry {
   Hospital = 'Hospital'
 }
 
+export interface EntryFormValues extends BaseEntry {
+  type: TypesEntry;
+  discharge?: {
+    date: string;
+    criteria: string;
+  },
+  employerName?: string;
+  sickLeave?: {
+    startDate: string;
+    endDate: string;
+  }
+  healthCheckRating?: HealthCheckRating;
+}
 
 export type NewEntry = | Omit<HospitalEntry, "id"> | Omit<OccupationalHealthcareEntry, "id"> | Omit<HealthCheckEntry, "id">;

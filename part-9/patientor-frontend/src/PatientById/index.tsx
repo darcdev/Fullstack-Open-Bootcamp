@@ -1,14 +1,13 @@
 import React from 'react';
 import { useParams } from "react-router-dom";
 import axios from 'axios';
-import { Gender, Patient } from '../types';
+import { EntryFormValues, Gender, Patient } from '../types';
 import { apiBaseUrl } from '../constants';
 import { Button, Typography } from '@material-ui/core';
 import { Male, Female, Transgender } from '@mui/icons-material';
 import { addEntry, updateActualPatient, useStateValue } from '../state';
 import EntryDetails from '../components/EntryDetails';
 import AddEntryModal from '../AddEntryModal';
-import { EntryFormValues } from '../AddEntryModal/AddEntryForm';
 
 const PatientById = () => {
     const { id: patientId } = useParams<{ id: string }>();
@@ -21,12 +20,19 @@ const PatientById = () => {
     };
 
     const submitNewEntry = async (values: EntryFormValues) => {
+        const newEntry = { ...values };
+        if (values.sickLeave?.startDate.length == 0) {
+            delete newEntry.sickLeave;
+        }
+        if (values.discharge?.date.length == 0) {
+            delete newEntry.discharge;
+        }
         try {
-            const { data: newEntry } = await axios.post<Patient>(
+            const { data: newEntryResponse } = await axios.post<Patient>(
                 `${apiBaseUrl}/patients/${patientId || ""}/entries`,
-                values
+                newEntry
             );
-            dispatch(addEntry(newEntry));
+            dispatch(addEntry(newEntryResponse));
             closeModal();
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
