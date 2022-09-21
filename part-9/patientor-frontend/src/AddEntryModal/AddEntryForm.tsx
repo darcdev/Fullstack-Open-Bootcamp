@@ -42,13 +42,13 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                     errors.type = requiredError;
                 }
                 if (!values.description) {
-                    errors.ssn = requiredError;
+                    errors.description = requiredError;
                 }
                 if (!values.specialist) {
-                    errors.dateOfBirth = requiredError;
+                    errors.specialist = requiredError;
                 }
                 if (!values.date) {
-                    errors.occupation = requiredError;
+                    errors.date = requiredError;
                 }
                 return errors;
             }}

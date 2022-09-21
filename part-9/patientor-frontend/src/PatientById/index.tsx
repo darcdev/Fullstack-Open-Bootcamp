@@ -13,6 +13,7 @@ import { EntryFormValues } from '../AddEntryModal/AddEntryForm';
 const PatientById = () => {
     const { id: patientId } = useParams<{ id: string }>();
     const [{ patient, diagnostics }, dispatch] = useStateValue();
+    const [error, setError] = React.useState<string | undefined>();
     const [modalOpen, setModalOpen] = React.useState<boolean>(false);
     const openModal = (): void => setModalOpen(true);
     const closeModal = (): void => {
@@ -29,11 +30,9 @@ const PatientById = () => {
             closeModal();
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
-                console.error(e?.response?.data || "Unrecognized axios error");
-                //setError(String(e?.response?.data?.error) || "Unrecognized axios error");
+                setError(String(e?.response?.data) || "Unrecognized axios error");
             } else {
-                console.error("Unknown error", e);
-                //setError("Unknown error");
+                setError("Unknown error");
             }
         }
     };
@@ -64,7 +63,7 @@ const PatientById = () => {
                     <Button variant="contained" style={{ marginBottom: "1rem", marginTop: "1rem" }} onClick={() => openModal()}>
                         Add New Entry
                     </Button>
-                    <AddEntryModal onClose={closeModal} onSubmit={submitNewEntry} modalOpen={modalOpen} />
+                    <AddEntryModal onClose={closeModal} onSubmit={submitNewEntry} modalOpen={modalOpen} error={error} />
                     <div>
                         {patient.entries.length > 0 && patient.entries.map(entry => {
                             return <div key={entry.id}>
